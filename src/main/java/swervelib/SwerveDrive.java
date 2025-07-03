@@ -1301,11 +1301,11 @@ public class SwerveDrive implements AutoCloseable
    *                                 per pixel). By optimizing this you can get * vision accurate to inches instead of
    *                                 feet.
    */
-  public void addVisionMeasurement(Pose2d poseFromVision, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs)
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp,
+                                   Matrix<N3, N1> visionMeasurementStdDevs)
   {
     odometryLock.lock();
-    Pose2d visionTranslationWithGiroRotation = new Pose2d(poseFromVision.getTranslation(), getOdometryHeading());
-    swerveDrivePoseEstimator.addVisionMeasurement(visionTranslationWithGiroRotation, timestamp, visionMeasurementStdDevs);
+    swerveDrivePoseEstimator.addVisionMeasurement(robotPose, timestamp, visionMeasurementStdDevs);
     odometryLock.unlock();
   }
 
@@ -1332,12 +1332,16 @@ public class SwerveDrive implements AutoCloseable
    * @param timestamp Timestamp the measurement was taken as time since startup, should be taken from
    *                  {@link Timer#getFPGATimestamp()} or similar sources.
    */
-  public void addVisionMeasurement(Pose2d poseFromVision, double timestamp)
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp)
   {
     odometryLock.lock();
-    Pose2d visionTranslationWithGiroRotation = new Pose2d(poseFromVision.getTranslation(), getOdometryHeading());
-    swerveDrivePoseEstimator.addVisionMeasurement(visionTranslationWithGiroRotation, timestamp);
+    swerveDrivePoseEstimator.addVisionMeasurement(robotPose, timestamp);
+//    Pose2d newOdometry = new Pose2d(swerveDrivePoseEstimator.getEstimatedPosition().getTranslation(),
+//                                    robotPose.getRotation());
     odometryLock.unlock();
+
+//    setGyroOffset(new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
+//    resetOdometry(newOdometry);
   }
 
   /**

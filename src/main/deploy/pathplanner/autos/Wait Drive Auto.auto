@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "CustomWaitCommand"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "Drive Forward"
           }
         }
       ]

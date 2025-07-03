@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -151,10 +151,21 @@ public class Vision
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
-        var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-                                         pose.timestampSeconds,
-                                         camera.curStdDevs);
+        if (Constants.UPDATE_HEADING_FROM_VISION) {
+          var pose = poseEst.get();
+          swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+                                          pose.timestampSeconds,
+                                          camera.curStdDevs);
+        }
+        else {
+          Pose2d poseFromVision = poseEst.get().estimatedPose.toPose2d();
+          Pose2d visionTranslationWithGiroRotation = new Pose2d(poseFromVision.getTranslation(), swerveDrive.getOdometryHeading());
+          swerveDrive.addVisionMeasurement(
+            visionTranslationWithGiroRotation,
+            poseEst.get().timestampSeconds,
+            camera.curStdDevs
+          );
+        }
       }
     }
 

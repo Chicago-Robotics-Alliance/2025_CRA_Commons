@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,8 +15,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -29,10 +33,12 @@ public class RobotContainer
 {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   //private final Sensation sensation = new Sensation();
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/musatche"));
-  //private final Conveyor conveyor = new Conveyor();
-  //private final Lights lights = new Lights();
-  //private final Climber climber = new Climber();
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/robot"));
+  // private final Conveyor conveyor = new Conveyor();
+  // private final Lights lights = new Lights();
+  // private final Climber climber = new Climber();
+  private final SendableChooser<Command> autoChooser;
+  private double wait_seconds = 5;
 
   //Trigger coralEnter = new Trigger(sensation::coralPresent);
  // Trigger coralHopper = new Trigger(sensation::coralInHopper);
@@ -79,8 +85,12 @@ public class RobotContainer
   public RobotContainer()
   {
     configureBindings();
+
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putNumber("Wait Time", wait_seconds);
+    NamedCommands.registerCommand("CustomWaitCommand", new WaitCommand(SmartDashboard.getNumber("Wait Time", wait_seconds)));
   }
 
   private void configureBindings()
@@ -155,8 +165,7 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
-    // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+    return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake)
