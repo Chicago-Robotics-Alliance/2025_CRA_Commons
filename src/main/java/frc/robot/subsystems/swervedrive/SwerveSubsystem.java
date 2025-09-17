@@ -6,6 +6,9 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -17,6 +20,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +31,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,7 +53,9 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
+import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -58,6 +67,8 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDrive swerveDrive;
   private final boolean     visionDriveTest = true;
   private       Vision      vision;
+  
+  private final PIDController drivePIDTuner = new PIDController(0, 0, 0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -94,6 +105,8 @@ public class SwerveSubsystem extends SubsystemBase
     }
     setupPathPlanner();
     //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+    PIDFConfig currentPID = swerveDrive.getModules()[0].getDrivePIDF();
+    drivePIDTuner.setPID(currentPID.p, currentPID.i, currentPID.d);
   }
 
   /**
@@ -129,6 +142,18 @@ public class SwerveSubsystem extends SubsystemBase
       if (Constants.USING_VISION == Constants.Vision.PHOTON_VISION) {
         vision.updatePoseEstimation(swerveDrive);
       }
+    }
+
+    SmartDashboard.putData("Swerve Rotation PID", swerveDrive.swerveController.thetaController);
+    SmartDashboard.putData("Swerve Translation PID", drivePIDTuner);
+    updateDrivePIDValues();
+  }
+
+  private void updateDrivePIDValues()
+  {
+    for (SwerveModule module : swerveDrive.getModules())
+    {
+      module.setDrivePIDF(new PIDFConfig(drivePIDTuner.getP(), drivePIDTuner.getI(), drivePIDTuner.getD(), 0));
     }
   }
 
