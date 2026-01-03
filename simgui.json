@@ -69,15 +69,20 @@
       "/LiveWindow/Ungrouped/Pigeon 2 [13]": "Gyro",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Arm/mechanism": "Mechanism2d",
+      "/SmartDashboard/ArmExample/mechanism": "Mechanism2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Encoders": "Alerts",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
+      "/SmartDashboard/Mechanisms/Arm/ArmMotor/LiveTuning": "Command",
+      "/SmartDashboard/Mechanisms/ArmExample/ArmMotor/LiveTuning": "Command",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
+      "/SmartDashboard/Pigeon 2 (v6) [30]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Swerve Drive": "Alerts",
@@ -87,6 +92,11 @@
     },
     "windows": {
       "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/ArmExample/mechanism": {
         "window": {
           "visible": true
         }
@@ -117,12 +127,12 @@
           "arrowWeight": 3.0,
           "style": "Hidden"
         },
-        "bottom": 1476,
-        "height": 8.210550308227539,
-        "left": 150,
-        "right": 2961,
-        "top": 79,
-        "width": 16.541748046875,
+        "bottom": 1638,
+        "height": 8.051901817321777,
+        "left": 534,
+        "right": 3466,
+        "top": 291,
+        "width": 17.54825210571289,
         "window": {
           "visible": true
         }
@@ -130,29 +140,30 @@
     }
   },
   "NetworkTables": {
+    "retained": {
+      ".schema": {
+        "open": true
+      }
+    },
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
       "LiveWindow": {
-        "open": true
-      },
-      "PathPlanner": {
         "open": true
       },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "Field": {
+        "ArmExample": {
+          "mechanism": {
+            "open": true
+          },
           "open": true
         },
         "open": true,
         "swerve": {
           "advantagescope": {
             "open": true
-          },
-          "open": true
+          }
         }
       }
     }
