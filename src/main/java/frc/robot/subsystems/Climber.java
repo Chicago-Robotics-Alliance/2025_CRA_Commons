@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -44,6 +45,8 @@ public class Climber extends SubsystemBase {
     }
 
     public void periodic(){
+        SmartDashboard.putData("ClimberPID", climberPID);
+        
         if (!initialized) {
             climberDutyCycle = 0.0;
             requestedPosition = armEncoder.getPosition();
